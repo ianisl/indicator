@@ -1,0 +1,4 @@
+*.mov
+*.psd
+*.png
+build-tmp/*
