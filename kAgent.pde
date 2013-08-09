@@ -201,14 +201,14 @@ class kAgent {
 
     //calculate forces
     if ((type==1)&&(active==true)) {
-      coh = cohesion(neighborList, rangeOfVis * cohRange);
+      //coh = cohesion(neighborList, rangeOfVis * cohRange);
       coh3 = cohesionType(neighborListBig3, rangeOfVis * 5, 3);
       
-      coh1.scaleSelf(cohScale);
+      //coh1.scaleSelf(cohScale);
       coh3.scaleSelf(cohScale);
     
-      coh = coh1.copy();
-      coh.addSelf(coh3);
+      coh = coh3;
+      //coh.addSelf(coh3);
     } else {
       //coh = cohesion(neighborList, rangeOfVis * cohRange);
     }
@@ -643,8 +643,8 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
 
         //  if within range: add their position to sum
         if ((dist > 0) && (dist < cohRangeOfVis)) {
-          Vec3D vec = pos.sub(other.pos);
-          vec.scaleSelf(1/dist);
+          Vec3D vec = other.pos.sub(pos);
+          vec.scaleSelf(1 / dist);
           sum.addSelf(vec);
           count++;
           if(isDebug==true) {
@@ -659,7 +659,7 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
     if (count > 0) {
       sum.scaleSelf(1/(float)count);
       //work out direction to sum from my current postion
-      sum.subSelf(pos);
+      //sum.subSelf(pos);
       //limit this vector by max force
       sum = vecLimit(sum, maxForce);
     }
@@ -720,7 +720,7 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
         if ((dist > 0) && (dist < sepRangeOfVis)) 
         {          
           Vec3D vec = pos.sub(other.pos);
-          vec.scaleSelf(1/dist);
+          vec.scaleSelf(dist);
           sum.addSelf(vec);
           count++;
           if(isDebug==true) {

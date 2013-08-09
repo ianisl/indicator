@@ -136,7 +136,7 @@ float SepScale5 = 3.2;
 
 float wanScale1=0.2;
 float springscale1=0.08;
-float cohscale1=0.2;
+float cohscale1=1;
 float aliscale1=0.2;
 float cohrange1=1.0;
 float seprange1=1.0;
