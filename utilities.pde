@@ -130,7 +130,12 @@ public void controlEvent(ControlEvent theEvent) {
       makeAttr = false;
     }
   }
+<<<<<<< HEAD
   if (theEvent.controller().name() == "Make Attractors 2") {
+=======
+  
+    if (theEvent.controller().name() == "Make Attractors 2") {
+>>>>>>> aa329671745100d575054a2bd4695eaca8babd35
     if (makeAttr2 == false) {
       makeAttr2 = true;
     }
