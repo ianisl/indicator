@@ -30,6 +30,7 @@ ArrayList importAgentVel;
 ArrayList agentPop;
 ArrayList springPop;
 ArrayList aColl = new ArrayList();
+ArrayList fsqColl = new ArrayList();
 ArrayList spawnList = new ArrayList();
 
 int boxWidth = 1281;
@@ -49,6 +50,7 @@ boolean G1 = false;
 boolean G2 = false;
 boolean G3 = false;
 boolean makeAttr = false;
+boolean makeAttr2 = false;
 
 int g1Cnt;
 int g2Cnt;
@@ -101,7 +103,7 @@ Button butMakeG1;
 Button butMakeG2;
 Button butMakeG3;
 Button butMakeAttr;
-
+Button butMakeAttr2;
 
 Button butMakeSA;
 Button butPause;
@@ -173,7 +175,7 @@ void setup() {
   MakeInterface(true); 
 
   loadVecData("imports/bus.txt", aColl);
-
+  loadVecData("imports/fsq.txt", fsqColl);
   frameRate(30);
   smooth();
   cam = new PeasyCam(this, 1300);
@@ -309,11 +311,24 @@ void draw() {
 
       Vec3D    v = new Vec3D(0, 0, 0);//(Vec3D) new Vec3D(random(1) -random(1) *speed, random(1) -random(1) *speed, 0);
 
-      kAgent a = new kAgent ( p, v, globalMaxVel, globalMaxForce, 3, false);//position, velocity, maxVel, maxForce, type, active
+      kAgent a = new kAgent ( p, v, globalMaxVel, globalMaxForce, 2, false);//position, velocity, maxVel, maxForce, type, active
     }
     makeAttr = false;
   }
 
+  if (makeAttr2 == true) {
+    //loop to create agents
+    for (int i = 0; i< fsqColl.size();i++) {
+      //get setup vectors needed for agent-----
+
+      Vec3D    p = (Vec3D)fsqColl.get(i);
+
+      Vec3D    v = new Vec3D(0, 0, 0);//(Vec3D) new Vec3D(random(1) -random(1) *speed, random(1) -random(1) *speed, 0);
+
+      kAgent a = new kAgent ( p, v, globalMaxVel, globalMaxForce, 3, false);//position, velocity, maxVel, maxForce, type, active
+    }
+    makeAttr2 = false;
+  }
   //////////////////////////////////////////////}MY_CODE
 
   if (seedAgents == true) {

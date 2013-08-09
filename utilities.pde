@@ -130,7 +130,14 @@ public void controlEvent(ControlEvent theEvent) {
       makeAttr = false;
     }
   }
-  
+  if (theEvent.controller().name() == "Make Attractors 2") {
+    if (makeAttr2 == false) {
+      makeAttr2 = true;
+    }
+    else {
+      makeAttr2 = false;
+    }
+  }
   
 
   if (theEvent.controller().name() == "Pause") {
