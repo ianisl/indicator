@@ -18,6 +18,7 @@ class kAgent {
   int agentIndex;
 
   ArrayList neighborList;
+  ArrayList neighborListBig3;
   ArrayList myTrailPos;
   ArrayList springList;
   ArrayList springAgentList;
@@ -32,6 +33,7 @@ class kAgent {
   kAgent(Vec3D _pos, Vec3D _vel, float _maxVel, float _maxForce, int _type, boolean _active) {
 
     neighborList = new ArrayList(); 
+    neighborListBig3 = new ArrayList(); 
     agentPop.add(this); //add agent to global agent arraylist
     active = _active;
     pos = _pos;
@@ -57,26 +59,26 @@ class kAgent {
 
 
   void update() {
-/*
+    /*
     //ranges of vision per agent type
-    if (type == 1) rangeOfVis = 20 * globalVision;
-    if (type == 2) rangeOfVis = 25 * globalVision;
-    if (type == 3)  rangeOfVis = 15 * globalVision;
-    if (type == 4)  rangeOfVis = 10 * globalVision;
-    if (type == 5)  rangeOfVis = 30 * globalVision;
-*/
-/*
+     if (type == 1) rangeOfVis = 20 * globalVision;
+     if (type == 2) rangeOfVis = 25 * globalVision;
+     if (type == 3)  rangeOfVis = 15 * globalVision;
+     if (type == 4)  rangeOfVis = 10 * globalVision;
+     if (type == 5)  rangeOfVis = 30 * globalVision;
+     */
+    /*
     //example of type changes
-    if (type4neighbourCount > 4) type = 1;
-    if ((type1neighbourCount > 4) && (type == 3 )) type = 4;
-    // if ((type2neighbourCount > 1) && (type == 3 )) lifeSpan+= 200;
-    if ((type4neighbourCount > 5) && (type == 4 )) type = 2;
-    if ((type2neighbourCount > 4) && (type == 2 )) type = 3;
-    if ((type3neighbourCount > 6) && (type == 3 )) type = 5;
-    if ((type3neighbourCount > 4) && (type == 2 )) type = 4;
-    if ((type1neighbourCount > 6) && (type == 1 )) type = 5;
-    if ((type4neighbourCount > 4) && (type == 4 )) type = 3;
-*/
+     if (type4neighbourCount > 4) type = 1;
+     if ((type1neighbourCount > 4) && (type == 3 )) type = 4;
+     // if ((type2neighbourCount > 1) && (type == 3 )) lifeSpan+= 200;
+     if ((type4neighbourCount > 5) && (type == 4 )) type = 2;
+     if ((type2neighbourCount > 4) && (type == 2 )) type = 3;
+     if ((type3neighbourCount > 6) && (type == 3 )) type = 5;
+     if ((type3neighbourCount > 4) && (type == 2 )) type = 4;
+     if ((type1neighbourCount > 6) && (type == 1 )) type = 5;
+     if ((type4neighbourCount > 4) && (type == 4 )) type = 3;
+     */
 
 
 
@@ -87,12 +89,14 @@ class kAgent {
       acc = new Vec3D();  
       Vec3D coh = new Vec3D();
       Vec3D sep = new Vec3D();
+      Vec3D sep1 = new Vec3D();
+      Vec3D sep2 = new Vec3D();
       Vec3D ali = new Vec3D();
       Vec3D wan = new Vec3D();
 
       //--GET AGENT NEIGHBOURS-------------------------------------
       neighborList = getNeighbours(agentPop, rangeOfVis * 1);
-
+      neighborListBig3 = getNeighboursBig(agentPop, rangeOfVis * 5, 3);
       //example of rule to kill cells if density is too high
       //if (neighborList.size() > 20) terminate();
 
@@ -112,12 +116,12 @@ class kAgent {
 
       ///*
       //example of behavioural rules based on agent type
-      if (type == 1)behaviours (wanScale1, springscale1, cohscale1, SepScale1, aliscale1, cohrange1,seprange1,alirange1);//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
-     if (type == 2)behaviours (wanScale2, springscale2, cohscale2, SepScale2, aliscale2, cohrange2,seprange2,alirange2);//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
-      if (type == 3)behaviours (wanScale3, springscale3, cohscale3, SepScale3, aliscale3, cohrange3,seprange3,alirange3);//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
+      if (type == 1)behaviours (wanScale1, springscale1, cohscale1, SepScale1, aliscale1, cohrange1, seprange1, alirange1);//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
+      if (type == 2)behaviours (wanScale2, springscale2, cohscale2, SepScale2, aliscale2, cohrange2, seprange2, alirange2);//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
+      if (type == 3)behaviours (wanScale3, springscale3, cohscale3, SepScale3, aliscale3, cohrange3, seprange3, alirange3);//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
       /* if (type == 4)behaviours (0.2, 0.1, 0.3, SepScale4, 0.2, 1.0, 8.0, 1.0 );//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
-      if (type == 5)behaviours (0.2, 0.1, 0.3, SepScale5, 0.2, 1.0, 8.0, 1.0 );//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
-    */
+       if (type == 5)behaviours (0.2, 0.1, 0.3, SepScale5, 0.2, 1.0, 8.0, 1.0 );//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
+       */
 
 
       //wan = wander();
@@ -143,7 +147,7 @@ class kAgent {
       //----UPDATE POSITION IN ENVIRONMENT---------
       checkBoxCollision();//bounce off box boundary   
       //torusSpace();
-      
+
       //--make or break temporary springs
       breakSpringDist();
 
@@ -186,17 +190,42 @@ class kAgent {
   void behaviours(float wanScale, float sprScale, float cohScale, float sepScale, float aliScale, float cohRange, float sepRange, float aliRange) {
 
     Vec3D coh = new Vec3D();
+    Vec3D coh1 = new Vec3D();
+    Vec3D coh3 = new Vec3D();
     Vec3D sep = new Vec3D();
+    Vec3D sep1 = new Vec3D();
+    Vec3D sep3 = new Vec3D();
     Vec3D ali = new Vec3D();
     Vec3D wan = new Vec3D();
     Vec3D spr = new Vec3D();
 
     //calculate forces
-    coh = cohesion(neighborList, rangeOfVis * cohRange);
-    
-   // if(type==1) {
+    if ((type==1)&&(active==true)) {
+      coh = cohesion(neighborList, rangeOfVis * cohRange);
+      coh3 = cohesionType(neighborListBig3, rangeOfVis * 5, 3);
       
-    sep = separation(neighborList, rangeOfVis * sepRange);
+      coh1.scaleSelf(cohScale);
+      coh3.scaleSelf(cohScale);
+    
+      coh = coh1.copy();
+      coh.addSelf(coh3);
+    } else {
+      //coh = cohesion(neighborList, rangeOfVis * cohRange);
+    }
+
+    /*if ((type==10)&&(active==true)) {
+      sep = separation(neighborList, rangeOfVis * sepRange);
+      sep3 = separationType(neighborListBig3, rangeOfVis * sepRange*10, 3);
+      
+      sep1.scaleSelf(cohScale);
+      sep3.scaleSelf(cohscale3);
+    
+      sep = sep1.copy();
+      sep.addSelf(sep3);
+    } else {
+      sep = separation(neighborList, rangeOfVis * sepRange);
+    }*/
+    
     ali = align(neighborList, rangeOfVis * aliRange);
     wan = wander();
     spr = springForce(vel); 
@@ -231,7 +260,6 @@ class kAgent {
 
       // if (type == 5) makeSpring(5, 6, 2, neighborList, sepRange*1.9);//int otherAgentType, int mySpringLimit, int otherSpringLimit, ArrayList pop, float connectDist
     }
-      
   }
 
 
@@ -249,7 +277,7 @@ class kAgent {
         if ( (d < range) && (d > 0) ) {
           //  if (checkifinList(neigh, a) == false) {
           neigh.add(a);
-
+          
           if (a.type == 1) type1neighbourCount++;
           if (a.type == 2) type2neighbourCount++;
           if (a.type == 3) type3neighbourCount++;
@@ -262,6 +290,28 @@ class kAgent {
     return neigh;
   }
 
+ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
+
+    ArrayList neigh = new ArrayList();
+
+    float clstDist = 999999999;
+
+    for (int i = 0 ; i < pop.size(); i++) {
+      kAgent a = (kAgent) pop.get(i);
+      if (a != this) {
+        if (a.type == otherAgentType) 
+        {
+          float d = pos.distanceTo(a.pos);
+          if ( (d < range) && (d > 0) ) {
+            //  if (checkifinList(neigh, a) == false) {
+            neigh.add(a);
+            //   }
+          }
+        }
+      }
+    }
+    return neigh;
+  }    
 
   void seekImage(String Colour, int imgRange, boolean attract) {
 
@@ -555,6 +605,11 @@ class kAgent {
       float dist = pos.distanceTo(other.pos);
       //  if within range: add their position to sum
       if ((dist > 0) && (dist < cohRangeOfVis)) {
+        if(isDebug==true) {
+          strokeWeight(1);
+          stroke(150,0,0);
+          line(pos.x, pos.y, other.pos.x, other.pos.y);
+        }   
         sum.addSelf(other.pos);
         count++;
       }
@@ -572,6 +627,45 @@ class kAgent {
   }
 
 
+  Vec3D cohesionType(ArrayList pop, float cohRangeOfVis, int otherAgentType) {
+    //create a new vector called sum
+    Vec3D sum = new Vec3D(0, 0, 0);
+    int count = 0;
+    //loop through all agents in pop
+    for (int i = 0; i < pop.size(); i++) {
+
+      //get other agent
+      kAgent other = (kAgent) pop.get(i);
+      if (other.type == otherAgentType) 
+      {  
+        //  check distance to other agent
+        float dist = pos.distanceTo(other.pos);
+
+        //  if within range: add their position to sum
+        if ((dist > 0) && (dist < cohRangeOfVis)) {
+          Vec3D vec = pos.sub(other.pos);
+          vec.scaleSelf(1/dist);
+          sum.addSelf(vec);
+          count++;
+          if(isDebug==true) {
+            strokeWeight(1);
+            stroke(min((500/dist)*255,255),0,0);
+            line(pos.x, pos.y, other.pos.x, other.pos.y);
+          }
+        }
+      }
+    }
+    //scale sum based on number of agents in range
+    if (count > 0) {
+      sum.scaleSelf(1/(float)count);
+      //work out direction to sum from my current postion
+      sum.subSelf(pos);
+      //limit this vector by max force
+      sum = vecLimit(sum, maxForce);
+    }
+    //return vector
+    return sum;
+  }
 
   Vec3D separation(ArrayList pop, float sepRangeOfVis) {
     //create a new vector called sum
@@ -589,6 +683,11 @@ class kAgent {
         vec.scaleSelf(1/dist);
         sum.addSelf(vec);
         count++;
+        if(isDebug==true) {
+          strokeWeight(1);
+          stroke(0,150,0);
+          line(pos.x, pos.y, other.pos.x, other.pos.y);
+        }
       }
     }
     //scale sum based on number of agents in range
@@ -602,7 +701,7 @@ class kAgent {
   }
 
 
-  Vec3D separationType(ArrayList pop, float sepRangeOfVis, int other) {
+  Vec3D separationType(ArrayList pop, float sepRangeOfVis, int otherAgentType) {
     //create a new vector called sum
     Vec3D sum = new Vec3D(0, 0, 0);
     int count = 0;
@@ -610,14 +709,26 @@ class kAgent {
     for (int i = 0; i < pop.size(); i++) {
       //get other agent
       kAgent other = (kAgent) pop.get(i);
-      //  check distance to other agent
-      float dist = pos.distanceTo(other.pos);
-      //  if within range: add their position to sum
-      if ((dist > 0) && (dist < sepRangeOfVis)) {
-        Vec3D vec = pos.sub(other.pos);
-        vec.scaleSelf(1/dist);
-        sum.addSelf(vec);
-        count++;
+
+
+      if (other.type == otherAgentType) 
+      {
+        //  check distance to other agent
+        float dist = pos.distanceTo(other.pos);
+
+        //  if within range: add their position to sum
+        if ((dist > 0) && (dist < sepRangeOfVis)) 
+        {          
+          Vec3D vec = pos.sub(other.pos);
+          vec.scaleSelf(1/dist);
+          sum.addSelf(vec);
+          count++;
+          if(isDebug==true) {
+            strokeWeight(1);
+            stroke(0,255,0);
+            line(pos.x, pos.y, other.pos.x, other.pos.y);
+          }
+        }
       }
     }
     //scale sum based on number of agents in range
@@ -731,33 +842,33 @@ class kAgent {
   }
 
 
- /* void torusSpace() {
-    //if ((springList.size()< 2) && (type == 2 )) acc.scaleSelf(10.0);
-
-    if(springList.size()==0){
-    if (pos.x > boxWidth) pos.x = pos.x - boxWidth;
-    if (pos.x < 0) pos.x = pos.x + boxWidth;
-    if (pos.y > boxHeight) pos.y = pos.y - boxHeight;
-    if (pos.y < 0) pos.y = pos.y + boxHeight;
-    if (pos.z > boxDepth) pos.z = pos.z - boxDepth;
-    if (pos.z < 0) pos.z = pos.z + boxDepth;
-     }
-     else {
-          if (pos.x<=0) {
-      vel.x=-vel.x;
-    }
-    if (pos.x>=width) {
-      vel.x=-vel.x;
-    }
-    if (pos.y<=0) {
-      vel.y=-vel.y;
-    }
-    if (pos.y>=height) {
-      vel.y=-vel.y;
-    }
-       
-     }
-  }*/
+  /* void torusSpace() {
+   //if ((springList.size()< 2) && (type == 2 )) acc.scaleSelf(10.0);
+   
+   if(springList.size()==0){
+   if (pos.x > boxWidth) pos.x = pos.x - boxWidth;
+   if (pos.x < 0) pos.x = pos.x + boxWidth;
+   if (pos.y > boxHeight) pos.y = pos.y - boxHeight;
+   if (pos.y < 0) pos.y = pos.y + boxHeight;
+   if (pos.z > boxDepth) pos.z = pos.z - boxDepth;
+   if (pos.z < 0) pos.z = pos.z + boxDepth;
+   }
+   else {
+   if (pos.x<=0) {
+   vel.x=-vel.x;
+   }
+   if (pos.x>=width) {
+   vel.x=-vel.x;
+   }
+   if (pos.y<=0) {
+   vel.y=-vel.y;
+   }
+   if (pos.y>=height) {
+   vel.y=-vel.y;
+   }
+   
+   }
+   }*/
 
   void render() {
     float lineScale = 5.0;
@@ -765,14 +876,14 @@ class kAgent {
 
     ///////////////////////////////////DRAW ATTRACTOR CROSS
 
-        if (type == 3) {
-          pushStyle();
-          stroke(255,30);
-          strokeWeight(5);
-          //line(pos.x,0,pos.x,height);
-          //line(0,pos.y,width,pos.y);
-          popStyle();
-        }
+    if (type == 3) {
+      pushStyle();
+      stroke(255, 30);
+      strokeWeight(5);
+      //line(pos.x,0,pos.x,height);
+      //line(0,pos.y,width,pos.y);
+      popStyle();
+    }
 
 
     ///////////////////////////////////DRAW ATTRACTOR CROSS
@@ -785,6 +896,7 @@ class kAgent {
       stroke(0, 255, 0);
     }
     if (type == 3) {
+      strokeWeight(5.0);
       stroke(0, 0, 255);
     }
     if (type == 4) {
@@ -794,7 +906,7 @@ class kAgent {
       stroke(238, 130, 238);
     }
 
-    strokeWeight(2.0);
+    //strokeWeight(2.0);
     //ellipse(pos.x, pos.y, rangeOfVis*.75, rangeOfVis*.75);
 
     //strokeWeight(20.1);

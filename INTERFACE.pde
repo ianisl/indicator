@@ -160,39 +160,42 @@ if(create){
   elemInGr++;
 
 
-  butMakeIA = cp5.addButton("Make Initial Agents", 10).setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+  butMakeIA = cp5.addButton("Make Initial Agents", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
 
-  butMakeG1 = cp5.addButton("Make G1", 10).setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+  butMakeG1 = cp5.addButton("Make G1", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
 
-    butMakeG2 = cp5.addButton("Make G2", 10).setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+    butMakeG2 = cp5.addButton("Make G2", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
 
-    butMakeG3 = cp5.addButton("Make G3", 10).setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+    butMakeG3 = cp5.addButton("Make G3", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
 
-      butMakeAttr = cp5.addButton("Make Attractors", 10).setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+      butMakeAttr = cp5.addButton("Make Attractors", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
   
   
-  butMakeSA = cp5.addButton("Make Seed Agents", 10).setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+  butMakeSA = cp5.addButton("Make Seed Agents", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
   
-  butPause = cp5.addButton("Pause", 10).setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+  butPause = cp5.addButton("Pause", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
   
-  butExport = cp5.addButton("Export", 10).setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+  butExport = cp5.addButton("Export", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
   
-  butImgBeh = cp5.addButton("ImageBehaviour", 10).setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+  butImgBeh = cp5.addButton("ImageBehaviour", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
   
-  butImgDisp = cp5.addButton("ImageDisplay", 10).setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+  butImgDisp = cp5.addButton("ImageDisplay", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
   
-  butRest = cp5.addButton("Restart", 10).setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+  butRest = cp5.addButton("Restart", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
+
+  butDebug = cp5.addButton("Debug", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
   elemInGr = 0;
   
   cp5.setAutoDraw(false);
@@ -372,39 +375,41 @@ else{
     if(!g3.isOpen())elemInGr-=prevGrCntr-1;
   prevGrCntr = 0;
 
+  butMakeIA.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
 
-  butMakeIA.setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+    butMakeG1.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
+  
+    butMakeG2.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
 
-    butMakeG1.setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
-  
-    butMakeG2.setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+    butMakeG3.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
 
-    butMakeG3.setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+  butMakeAttr.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
+  
+  butMakeSA.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
+  
+  butPause.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
+  
+  butExport.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
+  
+  butImgBeh.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
+  
+  butImgDisp.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
+  
+  butRest.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
 
-  butMakeAttr.setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
-  
-  butMakeSA.setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
-  
-  butPause.setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
-  
-  butExport.setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
-  
-  butImgBeh.setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
-  
-  butImgDisp.setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
-  
-  butRest.setPosition(sliderX, step+sliderSpacing*2+(sliderHeight+sliderSpacing) *elemInGr);
-  step += sliderHeight+sliderSpacing ;
+  butDebug.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
   elemInGr = 0;
   prevGrCntr = 0;
 

@@ -1,15 +1,6 @@
-
-
-//---------------------------------------------------------
-// SXXXX
-//---------------------------------------------------------
-// robert stuart-smith | copyright kokkugia | www.kokkugia.com | 2013
-// this code is distributed for purpose of Strelka workshop only. Special written persmission from the author required for any other use.
-
-
 //import libraries-------------------------------
 import processing.opengl.*;
-import processing.video.*;
+//import processing.video.*;
 import toxi.geom.*;
 import toxi.geom.mesh.*;
 import peasy.*;
@@ -51,7 +42,7 @@ int agentNum = 0;
 
 float globalVision = 1.0;
 float globalMaxForce = 3.5;
-float globalMaxVel = 2.0;
+float globalMaxVel = 0.1;
 boolean imageToggle = false;
 boolean initialAgents = false;
 boolean G1 = false;
@@ -118,7 +109,9 @@ Button butExport;
 Button butImgBeh;
 Button butImgDisp;
 Button butRest;
+Button butDebug;
 
+boolean isDebug = false;
 
 int sliderHeight = 10;
 int sliderWidth = 100;
@@ -126,6 +119,7 @@ int groupWidth = 150;
 
 int sliderX = 10;
 int sliderSpacing = 5;
+int buttonSpacing = 10;
 int step;
 int stepInGroup;
 int grNum;
@@ -134,9 +128,9 @@ int prevGrCntr;
 
 
 
-float SepScale1 = 2.9;
+float SepScale1 = 0.5;
 float SepScale2 = 2.9;
-float SepScale3 = 2.9;
+float SepScale3 = 0.9;
 float SepScale4 = 2.9;
 float SepScale5 = 3.2;
 
@@ -174,7 +168,7 @@ int counterSpawn = 0;
 void setup() {
 
   //camera + movie setup--------------
-  size(960, 540, OPENGL);//keep pixel resolution same proportions as 1920x1080 (used for final movies)
+  size(960, 1000, OPENGL);//keep pixel resolution same proportions as 1920x1080 (used for final movies)
   cp5 = new ControlP5(this);
   MakeInterface(true); 
 
@@ -182,8 +176,8 @@ void setup() {
 
   frameRate(30);
   smooth();
-  cam = new PeasyCam(this, 500);
-  cam.lookAt(boxWidth/2, boxHeight/2, 0);
+  cam = new PeasyCam(this, 1300);
+  cam.lookAt(boxWidth*0.35, boxHeight/2, 0);
 
   //get and store colour values for each pixel in the background image
   img = loadImage("imports/" + "map1.jpg");
@@ -298,7 +292,7 @@ void draw() {
 
       Vec3D    v = new Vec3D(0, 0, 0);//(Vec3D) new Vec3D(random(1) -random(1) *speed, random(1) -random(1) *speed, 0);
 
-      kAgent a = new kAgent ( p, v, globalMaxVel, globalMaxForce, 3, true);//position, velocity, maxVel, maxForce, type, active
+      kAgent a = new kAgent ( p, v, globalMaxVel, globalMaxForce, 3, false);//position, velocity, maxVel, maxForce, type, active
     }
     G3 = false;
   }

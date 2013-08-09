@@ -162,6 +162,15 @@ public void controlEvent(ControlEvent theEvent) {
     }
   }
 
+  if (theEvent.controller().name() == "Debug") {
+    if (isDebug == false) {
+      isDebug = true;
+    }
+    else {
+      isDebug = false;
+    }
+  }
+
   if (theEvent.controller().name() == "Restart") setup();
 }
 
