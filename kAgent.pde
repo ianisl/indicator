@@ -155,7 +155,8 @@ class kAgent {
       if (imageToggle == true) {
         //example of image attraction/repulsion behaviour
         seekImage("blue", 2, 2);
-        seekImage("green", 2, 1);//string Colour, int imgRange, boolean attract
+        seekImage("green", 2, 1);
+        seekImage("red", 2, 2);//string Colour, int imgRange, boolean attract
         //seekImage("blue", 2, false);
       }
 
@@ -375,6 +376,7 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
     //get closest pixel position of agent
     int indexX = int(pos.x); 
     int indexY = int(pos.y); 
+
     //set up variables
     int highestC = 0;
     int highestCpt[] = new int[2];
@@ -391,7 +393,7 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
 
           int x = i;
           int y = j;
-          if (x < 0) x = boxWidth + i;
+          if (x < 0) x = boxWidth + x;
           if (y < 0) y = boxHeight + y;
 
           if (x > boxWidth ) x =  x - boxWidth;
@@ -1044,22 +1046,22 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
 
 
     if (type == 1) {
-      stroke(255, 0, 0);
+      stroke(129, 81, 161);
     }
     if (type == 2) {
-      stroke(0, 255, 0);
+      stroke(37, 186, 230);
     }
     if (type == 3) {
       strokeWeight(5.0);
-      stroke(0, 0, 255);
+      stroke(156, 203, 59);
     }
     if (type == 4) {
-      stroke(0, 255, 200);
+      stroke(252, 178, 21);
       noFill();
       ellipse(pos.x, pos.y, rangeOfVis, rangeOfVis);
     }
     if (type == 5) {
-      stroke(238, 130, 238);
+      stroke(259, 59, 129);
     }
 
     //strokeWeight(2.0);

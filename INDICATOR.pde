@@ -14,7 +14,7 @@ ControlWindow controlWindow;
 public int sliderValue = 40;
 
 PImage obstacleImg;
-
+PImage blackImg;
 PImage spawnImg;//see http://processing.org/reference/PImage.html
 //Getting the color of a single pixel with get(x, y) is easy, 
 //but not as fast as grabbing the data directly from pixels[]. 
@@ -39,7 +39,7 @@ int boxHeight = 1656;
 int boxDepth = 300;
 boolean pause = false;
 boolean showSprings = true;
-boolean showBackgroundImage = false;
+boolean showBackgroundImage = true;
 int agentNum = 0;
 
 float globalVision = 1.0;
@@ -185,6 +185,7 @@ void setup() {
   //get and store colour values for each pixel in the background image
   spawnImg = loadImage("imports/" + "spawnMap.jpg");
   obstacleImg = loadImage("imports/" + "comfortObstacleMap.jpg");
+  blackImg = loadImage("imports/" + "blackmap.jpg");
 
   int dimension = spawnImg.width*spawnImg.height;
 
@@ -247,7 +248,10 @@ void draw() {
 
 
 
-  if (showBackgroundImage == true) image(obstacleImg, 0, 0);
+  if (showBackgroundImage == true) {
+    if(isDebug==true) image(obstacleImg, 0, 0);
+    else image(blackImg, 0, 0);
+    } 
 
 
   if (initialAgents == true) {
@@ -331,11 +335,12 @@ void draw() {
     for (int i = 0; i< fsqColl.size();i++) {
       //get setup vectors needed for agent-----
 
-      Vec3D    p = (Vec3D)fsqColl.get(i);
+      Vec3D    tempVectorP = (Vec3D)fsqColl.get(i);
+      Vec3D    p = new Vec3D(tempVectorP.x, tempVectorP.y, 0);
 
       Vec3D    v = new Vec3D(0, 0, 0);//(Vec3D) new Vec3D(random(1) -random(1) *speed, random(1) -random(1) *speed, 0);
 
-      kAgent a = new kAgent ( p, v, globalMaxVel, p.z*5, 2, false);//position, velocity, maxVel, maxForce, type, active
+      kAgent a = new kAgent ( p, v, globalMaxVel, tempVectorP.z*5, 2, false);//position, velocity, maxVel, maxForce, type, active
     }
     makeAttr2 = false;
   }
