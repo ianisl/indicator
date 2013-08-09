@@ -29,6 +29,8 @@ class kAgent {
   int type4neighbourCount = 0;
   int lifeSpan = 0;
 
+  int highestCpt[] = new int[2];
+
   // constructor---------------
   kAgent(Vec3D _pos, Vec3D _vel, float _maxVel, float _maxForce, int _type, boolean _active) {
 
@@ -130,7 +132,7 @@ class kAgent {
 
       if (imageToggle == true) {
         //example of image attraction/repulsion behaviour
-        //seekImage("red", 2, true);//string Colour, int imgRange, boolean attract
+        seekImage("green", 2, true);//string Colour, int imgRange, boolean attract
         //seekImage("blue", 2, false);
       }
 
@@ -313,53 +315,58 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
     return neigh;
   }    
 
-  void seekImage(String Colour, int imgRange, boolean attract) {
+ void seekImage(String Colour, int imgRange, boolean attract) {
 
     //get closest pixel position of agent
     int indexX = int(pos.x); 
     int indexY = int(pos.y); 
     //set up variables
     int highestC = 0;
-    int highestCpt[] = new int[2];
+    
     highestCpt[0] = 0;
     highestCpt[1] = 0;
 
     //loop through pixel neighbourhood range and find highest colour value in range
     for (int i =  indexX - imgRange; i < indexX + imgRange; i ++ ) {
       for (int j =  indexY - imgRange; j < indexY + imgRange; j ++ ) {
-        if ((i != 0) && (j != 0)) {
+        if ((i != 0) && (j != 0) && i != boxWidth && i != boxHeight) {
+          int x = i;
+          int y = j;
 
-          if (i < 0) i = boxWidth + i;
-          if (j < 0) j = boxHeight + j;
+          if (x < 0) x = boxWidth + x;
+          if (y < 0) y = boxHeight + y;
 
-          if (i > boxWidth) i =  i - boxWidth;
-          if (j > boxHeight) j = j - boxHeight;
+          if (x > boxWidth) x =  x - boxWidth;
+          if (y > boxHeight) y = y - boxHeight;
 
-          ArrayList col = imageMap[i][j];
+          x = max(min(0, x), boxWidth - 1);
+          y = max(min(0, y), boxHeight - 1);
+
+          ArrayList<Integer> col = imageMap[x][y];
           int C = 0;
 
           if (col != null) {
             if (Colour == "red") {
-              C = (Integer)  col.get(0);
+              C = col.get(0);
             }
             if (Colour == "green") {
-              C = (Integer)  col.get(1);
+              C = col.get(1);
             }
             if (Colour == "blue") {
-              C = (Integer)  col.get(2);
+              C = col.get(2);
             }
 
             if (C > highestC) {
 
               highestC = C;
-              highestCpt[0] = i;
-              highestCpt[1] = j;
+              highestCpt[0] = x;
+              highestCpt[1] = y;
             }
           }
         }
       }
     }
-
+/*
     //make colour pixel location a vector
     Vec3D Rvec = new Vec3D(int(highestCpt[0]), int(highestCpt[1]), 0);
 
@@ -378,9 +385,7 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
       seekR = vecLimit(seekR, maxForce); 
       //update agent accelleration
       acc.subSelf(seekR);
-    }
-  }
-
+    */  }
 
 
   void makeSpring(int otherAgentType, int mySpringLimit, int otherSpringLimit, ArrayList pop, float connectDist) {

@@ -43,7 +43,7 @@ int agentNum = 0;
 float globalVision = 1.0;
 float globalMaxForce = 3.5;
 float globalMaxVel = 1;
-boolean imageToggle = false;
+boolean imageToggle = true;
 boolean initialAgents = false;
 boolean G1 = false;
 boolean G2 = false;
@@ -189,7 +189,9 @@ void setup() {
 
       color  c1 = img.get(i, j);
 
-      imageMap[i][j] = new ArrayList();
+      ArrayList<String> test = new ArrayList<String>();
+
+      imageMap[i][j] = new ArrayList<Integer>();
       // imageMap[i][j] = new int[2];
 
       int r1=(c1>>16)&255;
