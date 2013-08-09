@@ -107,7 +107,7 @@ class kAgent {
 
       //--GET AGENT NEIGHBOURS-------------------------------------
       neighborList = getNeighbours(agentPop, rangeOfVis * 1);
-      neighborListClosest = getNeighboursClosest(agentPop, rangeOfVis * 0.01);
+      neighborListClosest = getNeighboursClosest(agentPop, rangeOfVis * 0.005);
       neighborListBig2 = getNeighboursBig(agentPop, rangeOfVis * 5, 2);
       neighborListBig3 = getNeighboursBig(agentPop, rangeOfVis * 10, 3);
       //example of rule to kill cells if density is too high
@@ -154,7 +154,8 @@ class kAgent {
 
       if (imageToggle == true) {
         //example of image attraction/repulsion behaviour
-        seekImage("green", 2, false);//string Colour, int imgRange, boolean attract
+        seekImage("blue", 2, 2);
+        seekImage("green", 2, 1);//string Colour, int imgRange, boolean attract
         //seekImage("blue", 2, false);
       }
 
@@ -226,8 +227,9 @@ class kAgent {
 
     //calculate forces
     if ((type==1)&&(active==true)) {
+      timerG1++;
       coh1 = cohesion(neighborList, rangeOfVis * cohRange);
-      coh2 = cohesionTypeFreeze(neighborListBig2, rangeOfVis * 2);
+      if((type==1)&&(timerG1>60)) {coh2 = cohesionTypeFreeze(neighborListBig2, rangeOfVis * 2);}
       coh3 = cohesionType(neighborListBig3, rangeOfVis * 10, 3);
       
       coh1.scaleSelf(cohScale);
@@ -367,50 +369,51 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
     return neigh;
   }    
 
- void seekImage(String Colour, int imgRange, boolean attract) {
-
+ void seekImage(String colour, int imgRange, int decision) 
+  {
+    Vec3D seekR = new Vec3D();
     //get closest pixel position of agent
     int indexX = int(pos.x); 
     int indexY = int(pos.y); 
     //set up variables
     int highestC = 0;
-    
+    int highestCpt[] = new int[2];
     highestCpt[0] = 0;
     highestCpt[1] = 0;
 
     //loop through pixel neighbourhood range and find highest colour value in range
-    for (int i =  indexX - imgRange; i < indexX + imgRange; i ++ ) {
-      for (int j =  indexY - imgRange; j < indexY + imgRange; j ++ ) {
-        if ((i != 0) && (j != 0) && i != boxWidth && i != boxHeight) {
+    for (int i =  indexX - imgRange; i < indexX + imgRange; i ++ ) 
+    {
+      for (int j =  indexY - imgRange; j < indexY + imgRange; j ++ ) 
+      {
+        if ((i != 0) && (j != 0) && i != boxWidth && i != boxHeight) 
+        {
+
           int x = i;
           int y = j;
-
-          if (x < 0) x = boxWidth + x;
+          if (x < 0) x = boxWidth + i;
           if (y < 0) y = boxHeight + y;
 
-          if (x > boxWidth) x =  x - boxWidth;
+          if (x > boxWidth ) x =  x - boxWidth;
           if (y > boxHeight) y = y - boxHeight;
+
 
           x = max(min(0, x), boxWidth - 1);
           y = max(min(0, y), boxHeight - 1);
 
           ArrayList<Integer> col = imageMap[x][y];
-          int C = 0;
+          int c = 0;
 
-          if (col != null) {
-            if (Colour == "red") {
-              C = col.get(0);
-            }
-            if (Colour == "green") {
-              C = col.get(1);
-            }
-            if (Colour == "blue") {
-              C = col.get(2);
-            }
+          if (col != null) 
+          {
+            if (colour == "red") c = col.get(0);
+            if (colour == "green") c = col.get(1);
+            if (colour == "blue") c = col.get(2);
 
-            if (C > highestC) {
+            if (c > highestC) 
+            {
 
-              highestC = C;
+              highestC = c;
               highestCpt[0] = x;
               highestCpt[1] = y;
             }
@@ -418,6 +421,37 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
         }
       }
     }
+
+    //make colour pixel location a vector
+    Vec3D rVec = new Vec3D(int(highestCpt[0]), int(highestCpt[1]), 0);
+
+    //make a gradient falloff attractor function to pixel location
+    float rDist = rVec.distanceTo(pos);
+
+    //Decision, after color was found 
+    if ((rDist > 0) && (highestC > 100)) 
+    {
+      Vec3D attR = rVec.copy();
+      seekR = steer(attR);
+
+      if (decision == 1) seekR.scaleSelf(-(highestC - 100)*0.01 * (1-( (rDist/imgRange)) * (1-(rDist/imgRange))));
+      if (decision == 2) seekR.scaleSelf((highestC - 100)*0.01 * (1-( (rDist/imgRange)) * (1-(rDist/imgRange))));
+
+      if (decision == 3) 
+      {
+        if (type != 5) 
+        {//this means type 5s will not get stuck on green
+          seekR.scaleSelf(-(highestC - 100)*0.01 * (1-( (rDist/imgRange)) * (1-(rDist/imgRange))));
+          active = false;
+          type = 3;
+        }
+      }
+    }
+
+    seekR = vecLimit(seekR, maxForce); 
+    //update agent accelleration
+    acc.subSelf(seekR);
+  }
 /*
     //make colour pixel location a vector
     Vec3D Rvec = new Vec3D(int(highestCpt[0]), int(highestCpt[1]), 0);
@@ -437,7 +471,7 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
       seekR = vecLimit(seekR, maxForce); 
       //update agent accelleration
       acc.subSelf(seekR);
-    */  }
+    */  
 
 
   void makeSpring(int otherAgentType, int mySpringLimit, int otherSpringLimit, ArrayList pop, float connectDist) {
@@ -750,10 +784,6 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
         float powerDist = other.maxForce;
         //  if within range: add their position to sum
         if ((dist > 0) && (dist < powerDist)) {
-          ///////////////////
-          //НАСТРОИТЬ ЗАВИСИМОСТЬ ОТ ПОУЭР ДИСТ
-          ///////////////////
-          println("powerDist = " + powerDist);
           // if points are very close
           if ((dist >0) && (dist < (powerDist * 0.3))) {
             Vec3D vec = other.pos.sub(pos);
@@ -767,14 +797,14 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
             count++;
           }
 
-          //if((isDebug==true)&&(otherAgentType==2)) {
-            /*strokeWeight(1);
+          if((isDebug==true)&&(other.type==2)) {
+            strokeWeight(1);
             stroke(min((500/dist)*255,255),0,0);
-            line(pos.x, pos.y, other.pos.x, other.pos.y);*/
+            line(pos.x, pos.y, other.pos.x, other.pos.y);
             stroke(255);
             
             ellipse(other.pos.x, other.pos.y, powerDist, powerDist);
-          //}
+          }
         } 
       }
     }
@@ -1024,9 +1054,9 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
       stroke(0, 0, 255);
     }
     if (type == 4) {
-      stroke(186, 85, 211);
+      stroke(0, 255, 200);
       noFill();
-      ellipse(pos.x, pos.y, rangeOfVis*.75, rangeOfVis*.75);
+      ellipse(pos.x, pos.y, rangeOfVis, rangeOfVis);
     }
     if (type == 5) {
       stroke(238, 130, 238);

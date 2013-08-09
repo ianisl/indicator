@@ -160,6 +160,8 @@ float cohrange3=1.0;
 float seprange3=1.0;
 float alirange3=0.6;
 
+float timerG1=0;
+
 ArrayList imageMap[][]= new ArrayList[boxWidth + 1][boxHeight + 1];
 //int[] imageMap[][]= new int[0] [boxWidth][boxHeight];
 
@@ -333,7 +335,7 @@ void draw() {
 
       Vec3D    v = new Vec3D(0, 0, 0);//(Vec3D) new Vec3D(random(1) -random(1) *speed, random(1) -random(1) *speed, 0);
 
-      kAgent a = new kAgent ( p, v, globalMaxVel, p.z*1000, 2, false);//position, velocity, maxVel, maxForce, type, active
+      kAgent a = new kAgent ( p, v, globalMaxVel, p.z*5, 2, false);//position, velocity, maxVel, maxForce, type, active
     }
     makeAttr2 = false;
   }
