@@ -96,7 +96,7 @@ class kAgent {
 
       //--GET AGENT NEIGHBOURS-------------------------------------
       neighborList = getNeighbours(agentPop, rangeOfVis * 1);
-      neighborListBig3 = getNeighboursBig(agentPop, rangeOfVis * 5, 3);
+      neighborListBig3 = getNeighboursBig(agentPop, rangeOfVis * 10, 3);
       //example of rule to kill cells if density is too high
       //if (neighborList.size() > 20) terminate();
 
@@ -201,30 +201,30 @@ class kAgent {
 
     //calculate forces
     if ((type==1)&&(active==true)) {
-      //coh = cohesion(neighborList, rangeOfVis * cohRange);
-      coh3 = cohesionType(neighborListBig3, rangeOfVis * 5, 3);
+      coh1 = cohesion(neighborList, rangeOfVis * cohRange);
+      coh3 = cohesionType(neighborListBig3, rangeOfVis * 10, 3);
       
-      //coh1.scaleSelf(cohScale);
+      coh1.scaleSelf(cohScale);
       coh3.scaleSelf(cohScale);
     
-      coh = coh3;
-      //coh.addSelf(coh3);
+      coh = coh1.copy();
+      coh.addSelf(coh3);
     } else {
-      //coh = cohesion(neighborList, rangeOfVis * cohRange);
+      coh = cohesion(neighborList, rangeOfVis * cohRange);
     }
 
-    /*if ((type==10)&&(active==true)) {
+    if ((type==10)&&(active==true)) {
       sep = separation(neighborList, rangeOfVis * sepRange);
       sep3 = separationType(neighborListBig3, rangeOfVis * sepRange*10, 3);
       
-      sep1.scaleSelf(cohScale);
-      sep3.scaleSelf(cohscale3);
+      sep1.scaleSelf(sepScale);
+      sep3.scaleSelf(sepScale);
     
       sep = sep1.copy();
       sep.addSelf(sep3);
     } else {
       sep = separation(neighborList, rangeOfVis * sepRange);
-    }*/
+    }
     
     ali = align(neighborList, rangeOfVis * aliRange);
     wan = wander();
@@ -643,16 +643,26 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
 
         //  if within range: add their position to sum
         if ((dist > 0) && (dist < cohRangeOfVis)) {
-          Vec3D vec = other.pos.sub(pos);
-          vec.scaleSelf(1 / dist);
-          sum.addSelf(vec);
-          count++;
+
+          // if points are very close
+          if ((dist >0) && (dist < (cohRangeOfVis * 0.3))) {
+            Vec3D vec = other.pos.sub(pos);
+            vec.scaleSelf(pow(100/dist, 2));
+            sum.addSelf(vec);
+            count++;
+          } else {
+            Vec3D vec = other.pos.sub(pos);
+            vec.scaleSelf(1 / dist);
+            sum.addSelf(vec);
+            count++;
+          }
+
           if(isDebug==true) {
             strokeWeight(1);
             stroke(min((500/dist)*255,255),0,0);
             line(pos.x, pos.y, other.pos.x, other.pos.y);
           }
-        }
+        } 
       }
     }
     //scale sum based on number of agents in range

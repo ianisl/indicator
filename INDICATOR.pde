@@ -42,7 +42,7 @@ int agentNum = 0;
 
 float globalVision = 1.0;
 float globalMaxForce = 3.5;
-float globalMaxVel = 0.1;
+float globalMaxVel = 1;
 boolean imageToggle = false;
 boolean initialAgents = false;
 boolean G1 = false;
@@ -128,7 +128,7 @@ int prevGrCntr;
 
 
 
-float SepScale1 = 0.5;
+float SepScale1 = 2.5;
 float SepScale2 = 2.9;
 float SepScale3 = 0.9;
 float SepScale4 = 2.9;
@@ -144,7 +144,7 @@ float alirange1=0.6;
 
 float wanScale2=0.2;
 float springscale2=0.08;
-float cohscale2=0.2;
+float cohscale2=1.2;
 float aliscale2=0.2;
 float cohrange2=1.0;
 float seprange2=1.0;
