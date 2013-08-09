@@ -18,6 +18,7 @@ class kAgent {
   int agentIndex;
 
   ArrayList neighborList;
+  ArrayList neighborListBig2;
   ArrayList neighborListBig3;
   ArrayList myTrailPos;
   ArrayList springList;
@@ -98,6 +99,7 @@ class kAgent {
 
       //--GET AGENT NEIGHBOURS-------------------------------------
       neighborList = getNeighbours(agentPop, rangeOfVis * 1);
+      neighborListBig2 = getNeighboursBig(agentPop, rangeOfVis * 5, 2);
       neighborListBig3 = getNeighboursBig(agentPop, rangeOfVis * 10, 3);
       //example of rule to kill cells if density is too high
       //if (neighborList.size() > 20) terminate();
@@ -132,7 +134,7 @@ class kAgent {
 
       if (imageToggle == true) {
         //example of image attraction/repulsion behaviour
-        seekImage("green", 2, true);//string Colour, int imgRange, boolean attract
+        //seekImage("green", 2, true);//string Colour, int imgRange, boolean attract
         //seekImage("blue", 2, false);
       }
 
@@ -193,6 +195,7 @@ class kAgent {
 
     Vec3D coh = new Vec3D();
     Vec3D coh1 = new Vec3D();
+    Vec3D coh2 = new Vec3D();
     Vec3D coh3 = new Vec3D();
     Vec3D sep = new Vec3D();
     Vec3D sep1 = new Vec3D();
@@ -204,12 +207,15 @@ class kAgent {
     //calculate forces
     if ((type==1)&&(active==true)) {
       coh1 = cohesion(neighborList, rangeOfVis * cohRange);
+      coh2 = cohesionType(neighborListBig3, rangeOfVis * 5, 2);
       coh3 = cohesionType(neighborListBig3, rangeOfVis * 10, 3);
       
       coh1.scaleSelf(cohScale);
-      coh3.scaleSelf(cohScale);
+      coh2.scaleSelf(cohscale2);
+      coh3.scaleSelf(cohscale3);
     
       coh = coh1.copy();
+      coh.addSelf(coh2);
       coh.addSelf(coh3);
     } else {
       coh = cohesion(neighborList, rangeOfVis * cohRange);

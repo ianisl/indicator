@@ -175,7 +175,9 @@ if(create){
       butMakeAttr = cp5.addButton("Make Attractors", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
   step += sliderHeight+buttonSpacing ;
   
-  
+  butMakeAttr = cp5.addButton("Make Attractors 2", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
+
   butMakeSA = cp5.addButton("Make Seed Agents", 10).setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
   step += sliderHeight+buttonSpacing ;
   
@@ -388,6 +390,9 @@ else{
   step += sliderHeight+buttonSpacing ;
 
   butMakeAttr.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
+  step += sliderHeight+buttonSpacing ;
+
+  butMakeAttr2.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
   step += sliderHeight+buttonSpacing ;
   
   butMakeSA.setPosition(sliderX, step+buttonSpacing*2+(sliderHeight+buttonSpacing) *elemInGr);
