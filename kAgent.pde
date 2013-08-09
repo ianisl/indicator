@@ -11,7 +11,7 @@ class kAgent {
   Vec3D acc;
 
   float maxVel;
-  float maxForce;
+  float maxForce = 1;
   float rangeOfVis;
   float Bounce;
   boolean active;
@@ -56,7 +56,7 @@ class kAgent {
     agentNum++;//global count of agents 
 
     maxVel = globalMaxVel;//_maxVel;
-    maxForce = globalMaxForce;// _maxForce;
+    maxForce = _maxForce;// _maxForce;
     type = _type;
     springList = new ArrayList(); 
     springAgentList = new ArrayList();
@@ -154,7 +154,7 @@ class kAgent {
 
       if (imageToggle == true) {
         //example of image attraction/repulsion behaviour
-        //seekImage("green", 2, true);//string Colour, int imgRange, boolean attract
+        seekImage("green", 2, false);//string Colour, int imgRange, boolean attract
         //seekImage("blue", 2, false);
       }
 
@@ -227,7 +227,7 @@ class kAgent {
     //calculate forces
     if ((type==1)&&(active==true)) {
       coh1 = cohesion(neighborList, rangeOfVis * cohRange);
-      coh2 = cohesionType(neighborListBig2, rangeOfVis * 2, 2);
+      coh2 = cohesionTypeFreeze(neighborListBig2, rangeOfVis * 2);
       coh3 = cohesionType(neighborListBig3, rangeOfVis * 10, 3);
       
       coh1.scaleSelf(cohScale);
@@ -662,11 +662,11 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
       float dist = pos.distanceTo(other.pos);
       //  if within range: add their position to sum
       if ((dist > 0) && (dist < cohRangeOfVis)) {
-        if(isDebug==true) {
+       /* if(isDebug==true) {
           strokeWeight(1);
           stroke(150,0,0);
           line(pos.x, pos.y, other.pos.x, other.pos.y);
-        }   
+        }   */
         sum.addSelf(other.pos);
         count++;
       }
@@ -714,14 +714,71 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
             count++;
           }
 
-          if(isDebug==true) {
+          /*if(isDebug==true) {
             strokeWeight(1);
             stroke(min((500/dist)*255,255),0,0);
             line(pos.x, pos.y, other.pos.x, other.pos.y);
-          }
+          }*/
         } 
       }
     }
+  
+    //scale sum based on number of agents in range
+    if (count > 0) {
+      sum.scaleSelf(1/(float)count);
+      //work out direction to sum from my current postion
+      //sum.subSelf(pos);
+      //limit this vector by max force
+      sum = vecLimit(sum, maxForce);
+    }
+    //return vector
+    return sum;
+  }
+  Vec3D cohesionTypeFreeze(ArrayList pop, float cohRangeOfVis) {
+    //create a new vector called sum
+    Vec3D sum = new Vec3D(0, 0, 0);
+    int count = 0;
+    //loop through all agents in pop
+    for (int i = 0; i < pop.size(); i++) {
+
+      //get other agent
+      kAgent other = (kAgent) pop.get(i);
+      if (other.type == 2) 
+      {  
+        //  check distance to other agent
+        float dist = pos.distanceTo(other.pos);
+        float powerDist = other.maxForce;
+        //  if within range: add their position to sum
+        if ((dist > 0) && (dist < powerDist)) {
+          ///////////////////
+          //НАСТРОИТЬ ЗАВИСИМОСТЬ ОТ ПОУЭР ДИСТ
+          ///////////////////
+          println("powerDist = " + powerDist);
+          // if points are very close
+          if ((dist >0) && (dist < (powerDist * 0.3))) {
+            Vec3D vec = other.pos.sub(pos);
+            vec.scaleSelf(pow(100/dist, 2));
+            sum.addSelf(vec);
+            count++;
+          } else {
+            Vec3D vec = other.pos.sub(pos);
+            vec.scaleSelf(1 / dist);
+            sum.addSelf(vec);
+            count++;
+          }
+
+          //if((isDebug==true)&&(otherAgentType==2)) {
+            /*strokeWeight(1);
+            stroke(min((500/dist)*255,255),0,0);
+            line(pos.x, pos.y, other.pos.x, other.pos.y);*/
+            stroke(255);
+            
+            ellipse(other.pos.x, other.pos.y, powerDist, powerDist);
+          //}
+        } 
+      }
+    }
+
     //scale sum based on number of agents in range
     if (count > 0) {
       sum.scaleSelf(1/(float)count);
@@ -750,11 +807,11 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
         vec.scaleSelf(1/dist);
         sum.addSelf(vec);
         count++;
-        if(isDebug==true) {
+        /*if(isDebug==true) {
           strokeWeight(1);
           stroke(0,150,0);
           line(pos.x, pos.y, other.pos.x, other.pos.y);
-        }
+        }*/
       }
     }
     //scale sum based on number of agents in range
@@ -790,11 +847,11 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
           vec.scaleSelf(dist);
           sum.addSelf(vec);
           count++;
-          if(isDebug==true) {
+          /*if(isDebug==true) {
             strokeWeight(1);
             stroke(0,255,0);
             line(pos.x, pos.y, other.pos.x, other.pos.y);
-          }
+          }*/
         }
       }
     }
@@ -984,5 +1041,3 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
     line(pos.x, pos.y, pos.z, pos.x - lineScale*vel.x, pos.y - lineScale*vel.y, pos.z - lineScale*vel.z);
   }
 }
-
-

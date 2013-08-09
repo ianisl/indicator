@@ -13,8 +13,9 @@ int myColorBackground = color(0, 0, 0);
 ControlWindow controlWindow;
 public int sliderValue = 40;
 
+PImage obstacleImg;
 
-PImage img;//see http://processing.org/reference/PImage.html
+PImage spawnImg;//see http://processing.org/reference/PImage.html
 //Getting the color of a single pixel with get(x, y) is easy, 
 //but not as fast as grabbing the data directly from pixels[]. 
 //The equivalent statement to get(x, y) using pixels[] is pixels[y*width+x].
@@ -49,8 +50,8 @@ boolean initialAgents = false;
 boolean G1 = false;
 boolean G2 = false;
 boolean G3 = false;
-boolean makeAttr = false;
-boolean makeAttr2 = false;
+boolean makeAttr = true;
+boolean makeAttr2 = true;
 
 int g1Cnt;
 int g2Cnt;
@@ -58,8 +59,6 @@ int g3Cnt;
 
 boolean seedAgents = false;
 int initialPopulation = 2200;
-
-
 
 Slider slInPop;
 Slider slGlVis;
@@ -130,13 +129,13 @@ int prevGrCntr;
 
 
 
-float SepScale1 = 2.5;
+float SepScale1 = 1.5;
 float SepScale2 = 2.9;
 float SepScale3 = 0.9;
 float SepScale4 = 2.9;
 float SepScale5 = 3.2;
 
-float wanScale1=0.2;
+float wanScale1=0.01;
 float springscale1=0.08;
 float cohscale1=1;
 float aliscale1=0.2;
@@ -144,7 +143,7 @@ float cohrange1=1.0;
 float seprange1=1.0;
 float alirange1=0.6;
 
-float wanScale2=0.2;
+float wanScale2=0.01;
 float springscale2=0.08;
 float cohscale2=1.2;
 float aliscale2=0.2;
@@ -153,7 +152,7 @@ float seprange2=1.0;
 float alirange2=0.6;
 
 
-float wanScale3=0.2;
+float wanScale3=0.01;
 float springscale3=0.08;
 float cohscale3=0.2;
 float aliscale3=0.2;
@@ -182,14 +181,32 @@ void setup() {
   cam.lookAt(boxWidth*0.35, boxHeight/2, 0);
 
   //get and store colour values for each pixel in the background image
-  img = loadImage("imports/" + "map1.jpg");
-  int dimension = img.width*img.height;
+  spawnImg = loadImage("imports/" + "spawnMap.jpg");
+  obstacleImg = loadImage("imports/" + "comfortObstacleMap.jpg");
 
-  for (int i = 0; i<img.width;i++) {
-    for (int j = 0; j<img.height;j++) {
+  int dimension = spawnImg.width*spawnImg.height;
+
+  for (int i = 0; i<spawnImg.width;i++) {
+    for (int j = 0; j<spawnImg.height;j++) {
+      counterSpawn++;
+      color  c1 = spawnImg.get(i, j);
+
+      //Если счетчик не кратен числу, то переходим в начало цикла
+      if (counterSpawn % 100 != 0) continue;
+
+      int r1=(c1>>16)&255;
+      if (random(255) < r1) {
+        Vec3D pointLoc_= new Vec3D(i, j, 0); 
+        spawnList.add(pointLoc_);
+      }
+    }
+  }
+
+  for (int i = 0; i<obstacleImg.width;i++) {
+    for (int j = 0; j<obstacleImg.height;j++) {
       counterSpawn++;
 
-      color  c1 = img.get(i, j);
+      color  c1 = obstacleImg.get(i, j);
 
       ArrayList<String> test = new ArrayList<String>();
 
@@ -203,17 +220,8 @@ void setup() {
       imageMap[i][j].add(int(r1));
       imageMap[i][j].add(int(g1));
       imageMap[i][j].add(int(b1));
-
-      if (counterSpawn % 100 != 0) continue;
-
-      if (random(255) < r1) {
-        Vec3D pointLoc_= new Vec3D(i, j, 0); 
-        spawnList.add(pointLoc_);
-      }
     }
   }
-
-
   // initiate arraylists------------------
   agentPop = new ArrayList();
   springPop = new ArrayList();
@@ -232,12 +240,12 @@ void draw() {
    butMakeIA.setPosition(sliderX, step+stepInGroup+sliderSpacing*2);
    }*/
 
-  //  if (imageToggle == true) image(img, 0, 0);
+  //  if (imageToggle == true) image(spawnImg, 0, 0);
 
 
 
 
-  if (showBackgroundImage == true) image(img, 0, 0);
+  if (showBackgroundImage == true) image(obstacleImg, 0, 0);
 
 
   if (initialAgents == true) {
@@ -311,7 +319,7 @@ void draw() {
 
       Vec3D    v = new Vec3D(0, 0, 0);//(Vec3D) new Vec3D(random(1) -random(1) *speed, random(1) -random(1) *speed, 0);
 
-      kAgent a = new kAgent ( p, v, globalMaxVel, globalMaxForce, 2, false);//position, velocity, maxVel, maxForce, type, active
+      kAgent a = new kAgent ( p, v, globalMaxVel, globalMaxForce, 3, false);//position, velocity, maxVel, maxForce, type, active
     }
     makeAttr = false;
   }
@@ -325,7 +333,7 @@ void draw() {
 
       Vec3D    v = new Vec3D(0, 0, 0);//(Vec3D) new Vec3D(random(1) -random(1) *speed, random(1) -random(1) *speed, 0);
 
-      kAgent a = new kAgent ( p, v, globalMaxVel, globalMaxForce, 3, false);//position, velocity, maxVel, maxForce, type, active
+      kAgent a = new kAgent ( p, v, globalMaxVel, p.z*1000, 2, false);//position, velocity, maxVel, maxForce, type, active
     }
     makeAttr2 = false;
   }
@@ -335,12 +343,13 @@ void draw() {
 
     float dice = random(1);
     if (dice > 0.9) {
+
       //get setup vectors needed for agent-----
       Vec3D    p3 = new Vec3D(200, 200, 0);
       Vec3D    v3 =  new Vec3D(random(1) -random(1) *globalMaxVel, random(1) -random(1) *globalMaxVel, 0);
       kAgent c = new kAgent ( p3, v3, globalMaxVel, globalMaxForce, 3, true);//position, velocity, maxVel, maxForce, type, active
 
-        //get setup vectors needed for agent-----
+      //get setup vectors needed for agent-----
       Vec3D    p4 = new Vec3D(600, 400, 0);
       Vec3D    v4 =  new Vec3D(random(1) -random(1) *globalMaxVel, random(1) -random(1) *globalMaxVel, 0);
       kAgent d = new kAgent ( p4, v4, globalMaxVel, globalMaxForce, 2, true);//position, velocity, maxVel, maxForce, type, active
