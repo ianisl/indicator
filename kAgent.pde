@@ -18,16 +18,22 @@ class kAgent {
   int agentIndex;
 
   ArrayList neighborList;
+  ArrayList neighborListClosest;
   ArrayList neighborListBig2;
   ArrayList neighborListBig3;
   ArrayList myTrailPos;
   ArrayList springList;
   ArrayList springAgentList;
+
   int type;
   int type1neighbourCount = 0;
   int type2neighbourCount = 0;
   int type3neighbourCount = 0;
   int type4neighbourCount = 0;
+  int type1closestNeighbourCount = 0;
+  int type2closestNeighbourCount = 0;
+  int type3closestNeighbourCount = 0;
+  int type4closestNeighbourCount = 0;
   int lifeSpan = 0;
 
   int highestCpt[] = new int[2];
@@ -36,6 +42,8 @@ class kAgent {
   kAgent(Vec3D _pos, Vec3D _vel, float _maxVel, float _maxForce, int _type, boolean _active) {
 
     neighborList = new ArrayList(); 
+    neighborListClosest = new ArrayList(); 
+    neighborListBig2 = new ArrayList(); 
     neighborListBig3 = new ArrayList(); 
     agentPop.add(this); //add agent to global agent arraylist
     active = _active;
@@ -99,14 +107,26 @@ class kAgent {
 
       //--GET AGENT NEIGHBOURS-------------------------------------
       neighborList = getNeighbours(agentPop, rangeOfVis * 1);
+      neighborListClosest = getNeighboursClosest(agentPop, rangeOfVis * 0.01);
       neighborListBig2 = getNeighboursBig(agentPop, rangeOfVis * 5, 2);
       neighborListBig3 = getNeighboursBig(agentPop, rangeOfVis * 10, 3);
       //example of rule to kill cells if density is too high
       //if (neighborList.size() > 20) terminate();
 
+      if ((type2closestNeighbourCount > 1) && (type == 1)) {
+        type = 1; active = false;
+      }
+      if ((type1closestNeighbourCount > 10) && (type == 1) && (active == true)) {
+        type = 4; active = false; rangeOfVis = type4closestNeighbourCount*0.5;
+      }
 
+      if ((type4closestNeighbourCount > 5) && (type == 4) && (active == false)) {
+        type = 4; 
+        active = false;
+        rangeOfVis = type4closestNeighbourCount;
+      }
 
-
+      if ((type3closestNeighbourCount > 1) && (type == 1)) terminate();
 
       //example of conditional rule to break spring
       //if (type == 1)  breakSpringNum(2);
@@ -207,7 +227,7 @@ class kAgent {
     //calculate forces
     if ((type==1)&&(active==true)) {
       coh1 = cohesion(neighborList, rangeOfVis * cohRange);
-      coh2 = cohesionType(neighborListBig3, rangeOfVis * 5, 2);
+      coh2 = cohesionType(neighborListBig2, rangeOfVis * 2, 2);
       coh3 = cohesionType(neighborListBig3, rangeOfVis * 10, 3);
       
       coh1.scaleSelf(cohScale);
@@ -290,6 +310,32 @@ class kAgent {
           if (a.type == 2) type2neighbourCount++;
           if (a.type == 3) type3neighbourCount++;
           if (a.type == 4) type4neighbourCount++;
+
+          //   }
+        }
+      }
+    }
+    return neigh;
+  }
+
+ArrayList getNeighboursClosest(ArrayList pop, float range) {
+
+    ArrayList neigh = new ArrayList();
+    type4neighbourCount = 0;
+    float clstDist = 999999999;
+
+    for (int i = 0 ; i < pop.size(); i++) {
+      kAgent a = (kAgent) pop.get(i);
+      if (a != this) {
+        float d = pos.distanceTo(a.pos);
+        if ( (d < range) && (d > 0) ) {
+          //  if (checkifinList(neigh, a) == false) {
+          neigh.add(a);
+          
+          if (a.type == 1) type1closestNeighbourCount++;
+          if (a.type == 2) type2closestNeighbourCount++;
+          if (a.type == 3) type3closestNeighbourCount++;
+          if (a.type == 4) type4closestNeighbourCount++;
 
           //   }
         }
@@ -922,13 +968,15 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
     }
     if (type == 4) {
       stroke(186, 85, 211);
+      noFill();
+      ellipse(pos.x, pos.y, rangeOfVis*.75, rangeOfVis*.75);
     }
     if (type == 5) {
       stroke(238, 130, 238);
     }
 
     //strokeWeight(2.0);
-    //ellipse(pos.x, pos.y, rangeOfVis*.75, rangeOfVis*.75);
+    //
 
     //strokeWeight(20.1);
     point(pos.x, pos.y, pos.z);
@@ -936,4 +984,5 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
     line(pos.x, pos.y, pos.z, pos.x - lineScale*vel.x, pos.y - lineScale*vel.y, pos.z - lineScale*vel.z);
   }
 }
+
 

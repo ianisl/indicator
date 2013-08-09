@@ -14,8 +14,7 @@ ControlWindow controlWindow;
 public int sliderValue = 40;
 
 
-PImage img;
-PImage img1;//see http://processing.org/reference/PImage.html
+PImage img;//see http://processing.org/reference/PImage.html
 //Getting the color of a single pixel with get(x, y) is easy, 
 //but not as fast as grabbing the data directly from pixels[]. 
 //The equivalent statement to get(x, y) using pixels[] is pixels[y*width+x].
@@ -177,10 +176,6 @@ void setup() {
 
   loadVecData("imports/bus.txt", aColl);
   loadVecData("imports/fsq.txt", fsqColl);
-<<<<<<< HEAD
-=======
-
->>>>>>> aa329671745100d575054a2bd4695eaca8babd35
   frameRate(30);
   smooth();
   cam = new PeasyCam(this, 1300);
@@ -188,18 +183,17 @@ void setup() {
 
   //get and store colour values for each pixel in the background image
   img = loadImage("imports/" + "map1.jpg");
-  //img1 = loadImage("imports/" + "map1.jpg");
   int dimension = img.width*img.height;
-  //int dimension1 = img1.width*img1.height;
-
 
   for (int i = 0; i<img.width;i++) {
     for (int j = 0; j<img.height;j++) {
       counterSpawn++;
-      
-      imageMap[i][j] = new ArrayList<Integer>();
+
       color  c1 = img.get(i, j);
-      
+
+      ArrayList<String> test = new ArrayList<String>();
+
+      imageMap[i][j] = new ArrayList<Integer>();
       // imageMap[i][j] = new int[2];
 
       int r1=(c1>>16)&255;
@@ -218,25 +212,7 @@ void setup() {
       }
     }
   }
-/*
-  for (int i = 0; i<img1.width;i++) {
-    for (int j = 0; j<img1.height;j++) {
-      counterSpawn++;
 
-      color  c1 = img1.get(i, j);
-
-      imageMap1[i][j] = new ArrayList<Integer>();
-      // imageMap[i][j] = new int[2];
-
-      int r1=(c1>>16)&255;
-      int g1=(c1>>8)&255;
-      int b1=c1&255;
-
-      imageMap1[i][j].add(int(r1));
-      imageMap1[i][j].add(int(g1));
-      imageMap1[i][j].add(int(b1));
-    }
-  }*/
 
   // initiate arraylists------------------
   agentPop = new ArrayList();
@@ -306,7 +282,7 @@ void draw() {
 
       Vec3D    v = new Vec3D(0, 0, 0);//(Vec3D) new Vec3D(random(1) -random(1) *speed, random(1) -random(1) *speed, 0);
 
-      kAgent a = new kAgent ( p, v, globalMaxVel, globalMaxForce, 2, false);//position, velocity, maxVel, maxForce, type, active
+      kAgent a = new kAgent ( p, v, globalMaxVel, globalMaxForce, 2, true);//position, velocity, maxVel, maxForce, type, active
     }
     G2 = false;
   }
@@ -339,20 +315,6 @@ void draw() {
     }
     makeAttr = false;
   }
-/*
-  if (makeAttr2 == true) {
-    //loop to create agents
-    for (int i = 0; i< fsqColl.size();i++) {
-      //get setup vectors needed for agent-----
-
-      Vec3D p = (Vec3D)fsqColl.get(i);
-
-      Vec3D    v = new Vec3D(0, 0, 0);//(Vec3D) new Vec3D(random(1) -random(1) *speed, random(1) -random(1) *speed, 0);
-
-      kAgent a = new kAgent ( p, v, globalMaxVel, 0, 2, false);//position, velocity, maxVel, maxForce, type, active
-    }
-    makeAttr = false;
-  }*/
 
   if (makeAttr2 == true) {
     //loop to create agents
