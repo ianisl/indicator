@@ -3,6 +3,7 @@
 // robert stuart-smith | copyright kokkugia | www.kokkugia.com | 2013
 // based on kAgent - roland snooks | kokkugia | www.kokkugia.com  | 2007
 // this code is distributed for purpose of Strelka workshop only. Special written persmission from the author required for any other use.
+  int tempCounter = 0;
 
 class kAgent {
 
@@ -19,6 +20,7 @@ class kAgent {
 
   ArrayList neighborList;
   ArrayList neighborListClosest;
+  ArrayList neighborListLongest;
   ArrayList neighborListBig2;
   ArrayList neighborListBig3;
   ArrayList myTrailPos;
@@ -45,6 +47,7 @@ class kAgent {
   int lifeSpan = 0;
 
   int highestCpt[] = new int[2];
+
 
   // constructor---------------
   kAgent(Vec3D _pos, Vec3D _vel, float _maxVel, float _maxForce, int _type, boolean _active) {
@@ -103,29 +106,18 @@ class kAgent {
 
 
 
-    if (active == true) {
-
-      //create zero length vectors for each behavioural method
-      acc = new Vec3D();  
-      Vec3D coh = new Vec3D();
-      Vec3D sep = new Vec3D();
-      Vec3D sep1 = new Vec3D();
-      Vec3D sep2 = new Vec3D();
-      Vec3D ali = new Vec3D();
-      Vec3D wan = new Vec3D();
+    
+     
 
       //--GET AGENT NEIGHBOURS-------------------------------------
       neighborList = getNeighbours(agentPop, rangeOfVis * 1);
       neighborListClosest = getNeighboursClosest(agentPop, rangeOfVis * 0.01);
       neighborListBig2 = getNeighboursBig(agentPop, rangeOfVis * 5, 2);
-      neighborListBig3 = getNeighboursBig(agentPop, rangeOfVis * 10, 3);
+      
+      neighborListLongest = getNeighboursLongest(agentPop, rangeOfVis * 1);
       //example of rule to kill cells if density is too high
       //if (neighborList.size() > 20) terminate();
 
-      if(type==4) {
-          rangeOfVis = type1neighbourCount*0.5;
-        
-      }
       // Замораживает точки при приближении к аттрактору
       if (type2closestNeighbourCount > 0) {
         active = false;
@@ -135,24 +127,29 @@ class kAgent {
 
       //Когда собирается 10 замороженных точек, по близости больше 0 аттракторов, ни одной такой точки — только тогда создается точка обозначающая потенциальное место
       if ((type1closestNeighbourCount > 10) && (type2closestNeighbourCount > 0) && (type4longestNeighbourCount == 0) && (type == 1)) {
-        Vec3D  p = pos;
-        Vec3D  v =  new Vec3D(random(1) -random(1) *globalMaxVel, random(1) -random(1) *globalMaxVel, 0);
-        kAgent d = new kAgent (p, v, globalMaxVel, globalMaxForce, 4, false);//position, velocity, maxVel, maxForce, type, active
-        rangeOfVis = type1neighbourCount*0.5;
-         println("range " + rangeOfVis);
+        active = false;
+        type=4;
+        maxForce = map(type1closestNeighbourCount, 0, 2000, 10, 100 );
+        tempCounter++;
+        ///println("tempCounter: "+tempCounter + " " + type4longestNeighbourCount);
+
       }
 
-      // Создаются агенты 2 типа
-      if((type1closestNeighbourCount > 10) && (type2neighbourCount > 0) && (type5longestNeighbourCount == 0) && (type == 4)) {
-
-          //disableNeighbours(neighborList, rangeOfVis, 1);//ArrayList pop, float range, int otherAgentType
-          Vec3D  p = pos;
-          
-          Vec3D  v =  new Vec3D(random(1) -random(1) *globalMaxVel, random(1) -random(1) *globalMaxVel, 0);
-          kAgent d = new kAgent (p, v, globalMaxVel, globalMaxForce, 5, true);//position, velocity, maxVel, maxForce, type, active
-         
-      }
       
+
+      if(type==4) {
+          maxForce = map(type1closestNeighbourCount, 0, 2000, 10, 100 );
+          //println("maxForce: "+maxForce); 
+          // Создаются агенты 2 типа
+         /* if((type1closestNeighbourCount > 10) && (type2neighbourCount > 0) && (type5longestNeighbourCount == 0)) {
+
+              //disableNeighbours(neighborList, rangeOfVis, 1);//ArrayList pop, float range, int otherAgentType
+              Vec3D  p = pos;
+              Vec3D  v =  new Vec3D(random(1) -random(1) *globalMaxVel, random(1) -random(1) *globalMaxVel, 0);
+              kAgent d = new kAgent (p, v, globalMaxVel, globalMaxForce, 5, true);//position, velocity, maxVel, maxForce, type, active
+             
+          }     */  
+      }
       /* хз что
       if ((type4closestNeighbourCount > 5) && (type == 4) && (active == false)) {
         type = 4; 
@@ -169,17 +166,26 @@ class kAgent {
       //if (type == 1)  breakSpringNum(2);
 
 
-
+if (active == true) {
+      
 
 
       //example of simple agent behaviour
       // behaviours (0.0, 0.3, 0.3, 1.4, 0.0, 1.0, 10.0, 1.0 );//wanScale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
 
+       //create zero length vectors for each behavioural method
+      acc = new Vec3D();  
+      Vec3D coh = new Vec3D();
+      Vec3D sep = new Vec3D();
+      Vec3D sep1 = new Vec3D();
+      Vec3D sep2 = new Vec3D();
+      Vec3D ali = new Vec3D();
+      Vec3D wan = new Vec3D();
       ///*
       //example of behavioural rules based on agent type
       if (type == 1)behaviours (wanScale1, springscale1, cohscale1, SepScale1, aliscale1, cohrange1, seprange1, alirange1);//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
-      if (type == 2)behaviours (wanScale2, springscale2, cohscale2, SepScale2, aliscale2, cohrange2, seprange2, alirange2);//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
-      if (type == 3)behaviours (wanScale3, springscale3, cohscale3, SepScale3, aliscale3, cohrange3, seprange3, alirange3);//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
+      if (type == 2)behaviours (0, 0, 0, 0, 0, 0, 0, 0);//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
+      if (type == 3)behaviours (0, 0, 0, 0, 0, 0, 0, 0);//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
       /* if (type == 4)behaviours (0.2, 0.1, 0.3, SepScale4, 0.2, 1.0, 8.0, 1.0 );//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
        if (type == 5)behaviours (0.2, 0.1, 0.3, SepScale5, 0.2, 1.0, 8.0, 1.0 );//wanScale, springscale, cohscale, sepscale,aliscale, cohrange,seprange,alirange
        */
@@ -241,7 +247,7 @@ class kAgent {
        */
     }
 
-
+    else { vel.scaleSelf(0);}
     //  lifeSpan--;
 
     //  if ((lifeSpan == 0) && (springList.size() == 0)) terminate();
@@ -262,7 +268,7 @@ class kAgent {
     Vec3D ali = new Vec3D();
     Vec3D wan = new Vec3D();
     Vec3D spr = new Vec3D();
-
+    if(active = true) {
     //calculate forces
     if ((type==1)&&(active==true)) {
       timerG1++;
@@ -313,7 +319,7 @@ class kAgent {
     acc.addSelf(wan);
     acc.addSelf(spr);
 
-
+}
     //----SPRING BEHAVIOURS-------------
 
     if (frameCount > 90) {
@@ -397,7 +403,32 @@ ArrayList getNeighboursClosest(ArrayList pop, float range) {
           if (a.type == 2) type2closestNeighbourCount++;
           if (a.type == 3) type3closestNeighbourCount++;
           if (a.type == 4) type4closestNeighbourCount++;
+          //println("type4closestNeighbourCount: "+type4closestNeighbourCount);
           if (a.type == 5) type5closestNeighbourCount++;
+          //   }
+        }
+      }
+    }
+    return neigh;
+  }
+ArrayList getNeighboursLongest(ArrayList pop, float range) {
+
+    ArrayList neigh = new ArrayList();
+    float clstDist = 999999999;
+
+    for (int i = 0 ; i < pop.size(); i++) {
+      kAgent a = (kAgent) pop.get(i);
+      if (a != this) {
+        float d = pos.distanceTo(a.pos);
+        if ( (d < range) && (d > 0) ) {
+          //  if (checkifinList(neigh, a) == false) {
+          neigh.add(a);
+          
+           if (a.type == 1) type1longestNeighbourCount++;
+            if (a.type == 2) type2longestNeighbourCount++;
+            if (a.type == 3) type3longestNeighbourCount++;
+            if (a.type == 4) type4longestNeighbourCount++;
+            if (a.type == 5) type5longestNeighbourCount++;
           //   }
         }
       }
@@ -420,11 +451,7 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
           if ( (d < range) && (d > 0) ) {
              neigh.add(a);
 
-            if (a.type == 1) type1longestNeighbourCount++;
-            if (a.type == 2) type2longestNeighbourCount++;
-            if (a.type == 3) type3longestNeighbourCount++;
-            if (a.type == 4) type4longestNeighbourCount++;
-            if (a.type == 5) type5longestNeighbourCount++;
+           
             //  if (checkifinList(neigh, a) == false) {
            
             //   }
@@ -1122,8 +1149,8 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
     if (type == 4) {
       stroke(252, 178, 21);
       noFill();
-      ellipse(pos.x, pos.y, rangeOfVis, rangeOfVis);
-      println("rangeOfVis: "+rangeOfVis);
+      strokeWeight(1);
+      ellipse(pos.x, pos.y, maxForce, maxForce);
     }
     if (type == 5) {
       stroke(255, 0, 0);
