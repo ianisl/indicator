@@ -104,6 +104,7 @@ class kAgent {
 
 
     if (active == true) {
+
       //create zero length vectors for each behavioural method
       acc = new Vec3D();  
       Vec3D coh = new Vec3D();
@@ -115,39 +116,53 @@ class kAgent {
 
       //--GET AGENT NEIGHBOURS-------------------------------------
       neighborList = getNeighbours(agentPop, rangeOfVis * 1);
-      neighborListClosest = getNeighboursClosest(agentPop, rangeOfVis * 0.005);
+      neighborListClosest = getNeighboursClosest(agentPop, rangeOfVis * 0.01);
       neighborListBig2 = getNeighboursBig(agentPop, rangeOfVis * 5, 2);
       neighborListBig3 = getNeighboursBig(agentPop, rangeOfVis * 10, 3);
       //example of rule to kill cells if density is too high
       //if (neighborList.size() > 20) terminate();
 
+      if(type==4) {
+          rangeOfVis = type1neighbourCount*0.5;
+        
+      }
+      // Замораживает точки при приближении к аттрактору
       if (type2closestNeighbourCount > 0) {
         active = false;
       } else {
         active = true;
       }
-      if ((type1closestNeighbourCount > 10) && (type2closestNeighbourCount > 0) && (type == 1)) {
-        type = 4; 
-        active = false; 
-        rangeOfVis = type4closestNeighbourCount*0.5;
+
+      //Когда собирается 10 замороженных точек, по близости больше 0 аттракторов, ни одной такой точки — только тогда создается точка обозначающая потенциальное место
+      if ((type1closestNeighbourCount > 10) && (type2closestNeighbourCount > 0) && (type4longestNeighbourCount == 0) && (type == 1)) {
+        Vec3D  p = pos;
+        Vec3D  v =  new Vec3D(random(1) -random(1) *globalMaxVel, random(1) -random(1) *globalMaxVel, 0);
+        kAgent d = new kAgent (p, v, globalMaxVel, globalMaxForce, 4, false);//position, velocity, maxVel, maxForce, type, active
+        rangeOfVis = type1neighbourCount*0.5;
+         println("range " + rangeOfVis);
       }
 
-      if((type1closestNeighbourCount > 10) && (type2neighbourCount > 0) && (type == 4)) {
+      // Создаются агенты 2 типа
+      if((type1closestNeighbourCount > 10) && (type2neighbourCount > 0) && (type5longestNeighbourCount == 0) && (type == 4)) {
 
           //disableNeighbours(neighborList, rangeOfVis, 1);//ArrayList pop, float range, int otherAgentType
           Vec3D  p = pos;
+          
           Vec3D  v =  new Vec3D(random(1) -random(1) *globalMaxVel, random(1) -random(1) *globalMaxVel, 0);
-          kAgent d = new kAgent (p, v, globalMaxVel, globalMaxForce, 5, false);//position, velocity, maxVel, maxForce, type, active 
-
+          kAgent d = new kAgent (p, v, globalMaxVel, globalMaxForce, 5, true);//position, velocity, maxVel, maxForce, type, active
+         
       }
+      
+      /* хз что
       if ((type4closestNeighbourCount > 5) && (type == 4) && (active == false)) {
         type = 4; 
         active = false;
-        rangeOfVis = type4closestNeighbourCount;
+        rangeOfVis = type4closestNeighbourCount;        
+      }*/
 
-      }
-
-      if ((type3closestNeighbourCount > 1) && (type == 1)) { terminate();
+      // Удаляет агентов на отсановке
+      if ((type3closestNeighbourCount > 1) && (type == 1)) { 
+        terminate();
       }
 
       //example of conditional rule to break spring
@@ -1108,6 +1123,7 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
       stroke(252, 178, 21);
       noFill();
       ellipse(pos.x, pos.y, rangeOfVis, rangeOfVis);
+      println("rangeOfVis: "+rangeOfVis);
     }
     if (type == 5) {
       stroke(255, 0, 0);
@@ -1117,8 +1133,9 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
     //
 
     //strokeWeight(20.1);
+    if(type != 4) {
     point(pos.x, pos.y, pos.z);
     strokeWeight(3.1);
-    line(pos.x, pos.y, pos.z, pos.x - lineScale*vel.x, pos.y - lineScale*vel.y, pos.z - lineScale*vel.z);
+    line(pos.x, pos.y, pos.z, pos.x - lineScale*vel.x, pos.y - lineScale*vel.y, pos.z - lineScale*vel.z);}
   }
 }
