@@ -29,11 +29,19 @@ class kAgent {
   int type1neighbourCount = 0;
   int type2neighbourCount = 0;
   int type3neighbourCount = 0;
-  int type4neighbourCount = 0;
+  int type4neighbourCount = 0; // Агент центра площади
+  int type5neighbourCount = 0; // Скамейка
   int type1closestNeighbourCount = 0;
   int type2closestNeighbourCount = 0;
   int type3closestNeighbourCount = 0;
   int type4closestNeighbourCount = 0;
+  int type5closestNeighbourCount = 0;
+  int type1longestNeighbourCount = 0;
+  int type2longestNeighbourCount = 0;
+  int type3longestNeighbourCount = 0;
+  int type4longestNeighbourCount = 0;
+  int type5longestNeighbourCount = 0;
+
   int lifeSpan = 0;
 
   int highestCpt[] = new int[2];
@@ -113,20 +121,34 @@ class kAgent {
       //example of rule to kill cells if density is too high
       //if (neighborList.size() > 20) terminate();
 
-      if ((type2closestNeighbourCount > 1) && (type == 1)) {
-        type = 1; active = false;
+      if (type2closestNeighbourCount > 0) {
+        active = false;
+      } else {
+        active = true;
       }
-      if ((type1closestNeighbourCount > 10) && (type == 1) && (active == true)) {
-        type = 4; active = false; rangeOfVis = type4closestNeighbourCount*0.5;
+      if ((type1closestNeighbourCount > 10) && (type2closestNeighbourCount > 0) && (type == 1)) {
+        type = 4; 
+        active = false; 
+        rangeOfVis = type4closestNeighbourCount*0.5;
       }
 
+      if((type1closestNeighbourCount > 10) && (type2neighbourCount > 0) && (type == 4)) {
+
+          //disableNeighbours(neighborList, rangeOfVis, 1);//ArrayList pop, float range, int otherAgentType
+          Vec3D  p = pos;
+          Vec3D  v =  new Vec3D(random(1) -random(1) *globalMaxVel, random(1) -random(1) *globalMaxVel, 0);
+          kAgent d = new kAgent (p, v, globalMaxVel, globalMaxForce, 5, false);//position, velocity, maxVel, maxForce, type, active 
+
+      }
       if ((type4closestNeighbourCount > 5) && (type == 4) && (active == false)) {
         type = 4; 
         active = false;
         rangeOfVis = type4closestNeighbourCount;
+
       }
 
-      if ((type3closestNeighbourCount > 1) && (type == 1)) terminate();
+      if ((type3closestNeighbourCount > 1) && (type == 1)) { terminate();
+      }
 
       //example of conditional rule to break spring
       //if (type == 1)  breakSpringNum(2);
@@ -281,7 +303,7 @@ class kAgent {
 
     if (frameCount > 90) {
 
-      if (type == 1) makeSpring(5, 3, 6, neighborList, sepRange*2.7);//int otherAgentType, int mySpringLimit, int otherSpringLimit, ArrayList pop, float connectDist
+      //if (type == 1) makeSpring(5, 3, 6, neighborList, sepRange*2.7);//int otherAgentType, int mySpringLimit, int otherSpringLimit, ArrayList pop, float connectDist
       //if (type == 1) makeSpring(1, 3, 3, neighborList, sepRange*1.7);//int otherAgentType, int mySpringLimit, int otherSpringLimit, ArrayList pop, float connectDist
       //if (type == 1) makeSpring(3, 3, 3, neighborList, sepRange*1.7);//int otherAgentType, int mySpringLimit, int otherSpringLimit, ArrayList pop, float connectDist
       //if (type == 2) makeSpring(1, 2, 2, neighborList, sepRange*1.7);//int otherAgentType, int mySpringLimit, int otherSpringLimit, ArrayList pop, float connectDist
@@ -293,6 +315,27 @@ class kAgent {
     }
   }
 
+  ArrayList disableNeighbours(ArrayList pop, float range, int otherAgentType) {
+
+    ArrayList neigh = new ArrayList();
+    type4neighbourCount = 0;
+    float clstDist = 999999999;
+
+    for (int i = 0 ; i < pop.size(); i++) {
+      kAgent a = (kAgent) pop.get(i);
+      if (a != this) {
+        float d = pos.distanceTo(a.pos);
+        if ( (d < range) && (d > 0) ) {
+          if (a.type == otherAgentType) 
+          {
+          
+            a.type = 6;
+          }
+        }
+      }
+    }
+    return neigh;
+  }
 
 
   ArrayList getNeighbours(ArrayList pop, float range) {
@@ -313,6 +356,7 @@ class kAgent {
           if (a.type == 2) type2neighbourCount++;
           if (a.type == 3) type3neighbourCount++;
           if (a.type == 4) type4neighbourCount++;
+          if (a.type == 5) type4neighbourCount++;
 
           //   }
         }
@@ -324,7 +368,6 @@ class kAgent {
 ArrayList getNeighboursClosest(ArrayList pop, float range) {
 
     ArrayList neigh = new ArrayList();
-    type4neighbourCount = 0;
     float clstDist = 999999999;
 
     for (int i = 0 ; i < pop.size(); i++) {
@@ -339,7 +382,7 @@ ArrayList getNeighboursClosest(ArrayList pop, float range) {
           if (a.type == 2) type2closestNeighbourCount++;
           if (a.type == 3) type3closestNeighbourCount++;
           if (a.type == 4) type4closestNeighbourCount++;
-
+          if (a.type == 5) type5closestNeighbourCount++;
           //   }
         }
       }
@@ -360,8 +403,15 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
         {
           float d = pos.distanceTo(a.pos);
           if ( (d < range) && (d > 0) ) {
+             neigh.add(a);
+
+            if (a.type == 1) type1longestNeighbourCount++;
+            if (a.type == 2) type2longestNeighbourCount++;
+            if (a.type == 3) type3longestNeighbourCount++;
+            if (a.type == 4) type4longestNeighbourCount++;
+            if (a.type == 5) type5longestNeighbourCount++;
             //  if (checkifinList(neigh, a) == false) {
-            neigh.add(a);
+           
             //   }
           }
         }
@@ -623,7 +673,6 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
 
     for (int i = agentIndex; i < agentPop.size(); i++) {
       kAgent a = (kAgent) agentPop.get(i);
-
       a.agentIndex-=1;
     }
   }
@@ -1061,7 +1110,7 @@ ArrayList getNeighboursBig(ArrayList pop, float range, int otherAgentType) {
       ellipse(pos.x, pos.y, rangeOfVis, rangeOfVis);
     }
     if (type == 5) {
-      stroke(259, 59, 129);
+      stroke(255, 0, 0);
     }
 
     //strokeWeight(2.0);
